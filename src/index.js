@@ -3,6 +3,7 @@ import fs from 'fs'
 import dotenv from 'dotenv'
 import fetch from 'node-fetch'
 dotenv.config()
+console.log('11111');
 
 // const configuration = new Configuration({
 //     apiKey: process.env.OPENAI_API_KEY,
@@ -53,6 +54,7 @@ const postOpenAi = (request, socket, messages) => {
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
         },
+        responseType: 'stream'
       }
     )
     .then(response => {
@@ -89,10 +91,12 @@ const postOpenAi = (request, socket, messages) => {
     })
     .catch(er => {
       console.log('🚀 ~ file: index.js:75 ~ postOpenAi ~ er:', er)
+      console.log('🚀 ~ file: index.js:75 ~ postOpenAi ~ er:', er.response.data)
       console.log('post api请求出错')
     })
 }
-postOpenAi('你好', {}, [])
+// postOpenAi('你好', {}, [])
+console.log('11111');
 
 import WebSocket, { WebSocketServer } from 'ws'
 const server = new WebSocketServer({ port: 8088 })
