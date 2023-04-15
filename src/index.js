@@ -40,28 +40,30 @@ const postOpenAi = (request, socket, messages) => {
       response.data.on('data', chunk => {
         const dataStr = chunk.toString()
         const dataArr = dataStr.split("\n").filter(item=> item)
-        try {
           dataArr.forEach(v=>{
+            try {
               const item = JSON.parse(v.slice(6))
+              console.log("🚀 ~ file: index.js:47 ~ postOpenAi ~ item.choices.finish_reason:", item)
               if(item.choices.finish_reason=='stop'){
                 const data = sendData()
                 data.msg = 'DONE'
                 socket.send(JSON.stringify(data))
                 messages.push({ role: 'assistant', content: rep })
               }else{
-                const content = item.choices[0].delta.content
+                const content = JSON.stringify(item.choices[0].delta.content) 
                 rep += content
                 socket.send(content)
               }
+            } catch (error) {
+              console.log("🚀 ~ file: index.js:43 ~ postOpenAi ~ dataArr:",JSON.stringify(dataArr))
+              console.log('错误数据：', dataStr)
+              const data = sendData()
+              data.msg = 'DONE'
+              socket.send(JSON.stringify(data))
+              messages.push({ role: 'assistant', content: rep })
+            }
           })
-        } catch (error) {
-          console.log("🚀 ~ file: index.js:43 ~ postOpenAi ~ dataArr:",JSON.stringify(dataArr))
-          console.log('错误数据：', dataStr)
-          const data = sendData()
-          data.msg = 'DONE'
-          socket.send(JSON.stringify(data))
-          messages.push({ role: 'assistant', content: rep })
-        }
+        
       })
     })
     .catch(er => {
