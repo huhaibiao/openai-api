@@ -43,6 +43,7 @@ const postOpenAi = (request, socket, messages) => {
         try {
           dataArr.forEach(v=>{
               const item = JSON.parse(v.slice(6))
+              console.log("🚀 ~ file: index.js:46 ~ postOpenAi ~ item:", item)
               if(item.choices.finish_reason=='stop'){
                 const data = sendData()
                 data.msg = 'DONE'
