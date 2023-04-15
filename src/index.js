@@ -1,29 +1,5 @@
-import { Configuration, OpenAIApi } from 'openai'
-import fs from 'fs'
 import dotenv from 'dotenv'
-import fetch from 'node-fetch'
 dotenv.config()
-console.log('11111');
-
-// const configuration = new Configuration({
-//     apiKey: process.env.OPENAI_API_KEY,
-// });
-// const openai = new OpenAIApi(configuration);
-// openai.createChatCompletion(
-//     {
-//         model: "gpt-3.5-turbo",
-//         // prompt: "Hello world",
-//         messages: [{ role: "user", content: "Hello world" }],
-//         max_tokens: 7,
-//         temperature: 0.8,
-//         stream: true,
-//     }
-// ).then(response => {
-//     response.onmessage = function (event) {
-//         console.log('🚀 ~ file: index.js:27 ~ event.data:', event.data)
-//     }
-// })
-// const axios = require('axios');
 const wss = new Map()
 // let messages = [{ "role": "system", "content": "You are a professional front end assistant." }]
 import axios from 'axios'
@@ -58,7 +34,6 @@ const postOpenAi = (request, socket, messages) => {
       }
     )
     .then(response => {
-      console.log(Object.keys(response))
       response.data.on('data', chunk => {
         const dataStr = chunk.toString().slice(6)
         let data
@@ -95,8 +70,6 @@ const postOpenAi = (request, socket, messages) => {
       console.log('post api请求出错')
     })
 }
-postOpenAi('你好', {}, [])
-console.log('11111');
 
 import WebSocket, { WebSocketServer } from 'ws'
 const server = new WebSocketServer({ port: 8088 })
