@@ -43,8 +43,7 @@ const postOpenAi = (request, socket, messages) => {
           dataArr.forEach(v=>{
             try {
               const item = JSON.parse(v.slice(6))
-              console.log("🚀 ~ file: index.js:47 ~ postOpenAi ~ item.choices.finish_reason:", item.choices[0].delta)
-              if(item.choices.finish_reason=='stop'){
+              if(item.choices.finish_reason.include('stop')){
                 console.log("🚀 ~ file: index.js:48 ~ postOpenAi ~ item.choices.finish_reason:", item.choices.finish_reason)
                 const data = sendData()
                 data.msg = 'DONE'
@@ -52,6 +51,9 @@ const postOpenAi = (request, socket, messages) => {
                 messages.push({ role: 'assistant', content: rep })
               }else{
                 const content = JSON.stringify(item.choices[0].delta.content) 
+                if (content==='undefined') {
+                  return
+                }
                 rep += content
                 socket.send(content)
               }
