@@ -39,31 +39,22 @@ const postOpenAi = (request, socket, messages) => {
     .then(response => {
       response.data.on('data', chunk => {
         const dataStr = chunk.toString()
-        const lines = dataStr.split("\n")
-        console.log("🚀 ~ file: index.js:43 ~ postOpenAi ~ lines:",JSON.stringify(lines)  )
-        console.log("🚀 ~ file: index.js:41 ~ postOpenAi ~ chunk:", dataStr, dataStr.length)
-        const regex = /data:\s*({.*?})/g; // 匹配data: 后面的[object Object] 中的内容
-        let match;
-        const dataArr = [];
+        const dataArr = dataStr.split("\n").filter(item=> item)
         try {
-        while ((match = regex.exec(dataStr)) !== null) {
-          console.log(11111, JSON.stringify(match));
-          console.log(222, chunk);
-          const data = JSON.parse(match[1]); // 将匹配到的字符串解析为 JSON 对象
-          dataArr.push(data);
-        }
-          dataArr.forEach(item=>{
-            if(item.choices.finish_reason=='stop'){
-              const data = sendData()
-              data.msg = 'DONE'
-              socket.send(JSON.stringify(data))
-              messages.push({ role: 'assistant', content: rep })
-            }else{
-              rep += data.choices[0].delta.content
-              socket.send(item.choices[0].delta.content)
-            }
+          dataArr.forEach(v=>{
+              const item = JSON.parse(v.slice(6))
+              if(item.choices.finish_reason=='stop'){
+                const data = sendData()
+                data.msg = 'DONE'
+                socket.send(JSON.stringify(data))
+                messages.push({ role: 'assistant', content: rep })
+              }else{
+                rep += data.choices[0].delta.content
+                socket.send(item.choices[0].delta.content)
+              }
           })
         } catch (error) {
+          console.log("🚀 ~ file: index.js:43 ~ postOpenAi ~ dataArr:",JSON.stringify(dataArr))
           console.log('错误数据：', dataStr)
           const data = sendData()
           data.msg = 'DONE'
