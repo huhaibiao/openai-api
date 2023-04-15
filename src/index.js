@@ -83,6 +83,7 @@ const sendData = (msg = '连接成功') => {
 }
 server.on('connection', (socket, req) => {
   const sessionId = req.url.split('=')[3]
+  console.log('链接成功', new Date().toLocaleString());
   let messages = [{ role: 'system', content: 'You are a professional front end assistant.' }]
   if (wss.has(sessionId)) {
     let userWss = wss.get(sessionId)
