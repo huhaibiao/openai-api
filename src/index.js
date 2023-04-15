@@ -6,14 +6,17 @@ import axios from 'axios'
 
 const postOpenAi = (request, socket, messages) => {
   let rep = ''
+  messages.push({ role: 'user', content: request })
   console.log(
     '🚀 ~ file: index.js:26 ~ postOpenAi ~ request:',
     request,
     'time:' + new Date().toLocaleTimeString(),
     JSON.stringify(messages)
   )
-  messages.push({ role: 'user', content: request })
-
+  const l = messages.length
+  if (l >= 7) {
+    messages.splice(1, l - 4)
+  }
   axios
     .post(
       'https://api.openai.com/v1/chat/completions',
@@ -35,6 +38,8 @@ const postOpenAi = (request, socket, messages) => {
     )
     .then(response => {
       response.data.on('data', chunk => {
+        console.log("🚀 ~ file: index.js:41 ~ postOpenAi ~ chunk:", chunk)
+        return
         const dataStr = chunk.toString().slice(6)
         let data
         try {
