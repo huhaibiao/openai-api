@@ -95,7 +95,7 @@ const postOpenAi = (request, socket, messages) => {
       console.log('post api请求出错')
     })
 }
-// postOpenAi('你好', {}, [])
+postOpenAi('你好', {}, [])
 console.log('11111');
 
 import WebSocket, { WebSocketServer } from 'ws'
