@@ -51,7 +51,8 @@ const postOpenAi = (request, socket, messages) => {
                 messages.push({ role: 'assistant', content: rep })
               }else{
                 const content = JSON.stringify(item.choices[0].delta.content) 
-                if (content==='undefined') {
+                console.log("🚀 ~ file: index.js:54 ~ postOpenAi ~ item.choices[0].delta:", item.choices[0].delta)
+                if (!content) {
                   return
                 }
                 rep += content
@@ -59,7 +60,7 @@ const postOpenAi = (request, socket, messages) => {
               }
             } catch (error) {
               console.log("🚀 ~ file: index.js:43 ~ postOpenAi ~ dataArr:",JSON.stringify(dataArr))
-              console.log('错误数据：', dataStr)
+              console.log('错误数据：', v)
               const data = sendData()
               data.msg = 'DONE'
               socket.send(JSON.stringify(data))
