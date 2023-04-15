@@ -39,26 +39,27 @@ const postOpenAi = (request, socket, messages) => {
     .then(response => {
       response.data.on('data', chunk => {
         console.log("🚀 ~ file: index.js:41 ~ postOpenAi ~ chunk:", chunk.toString(), chunk.toString().length)
-        const dataStr = chunk.toString().slice(6)
-        let data
+        const regex = /data:\s*({.*?})/g; // 匹配data: 后面的[object Object] 中的内容
+        let match;
+        const dataArr = [];
+        while ((match = regex.exec(chunk.toString())) !== null) {
+          const data = JSON.parse(match[1]); // 将匹配到的字符串解析为 JSON 对象
+          dataArr.push(data);
+        }
         try {
-          data = JSON.parse(dataStr)
-          if (data.choices) {
-            const role = data.choices[0].delta.role
-            if (role) {
+          console.log(11111, JSON.stringify(dataArr));
+          
+          dataArr.forEach(item=>{
+            if(item.choices.finish_reason=='stop'){
               const data = sendData()
-              data.role = role
-              return socket.send(JSON.stringify(data))
-            }
-            if (data.choices[0].delta.content) {
+              data.msg = 'DONE'
+              socket.send(JSON.stringify(data))
+              messages.push({ role: 'assistant', content: rep })
+            }else{
               rep += data.choices[0].delta.content
-              socket.send(data.choices[0].delta.content)
+              socket.send(item.choices[0].delta.content)
             }
-          } else {
-            const data = sendData()
-            data.finishReason = data.choices.finish_reason
-            return socket.send(JSON.stringify(data))
-          }
+          })
         } catch (error) {
           console.log('错误数据：', dataStr)
           const data = sendData()
