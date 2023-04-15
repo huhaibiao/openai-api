@@ -38,8 +38,7 @@ const postOpenAi = (request, socket, messages) => {
     )
     .then(response => {
       response.data.on('data', chunk => {
-        console.log("🚀 ~ file: index.js:41 ~ postOpenAi ~ chunk:", chunk.toString())
-        return
+        console.log("🚀 ~ file: index.js:41 ~ postOpenAi ~ chunk:", chunk.toString(), chunk.toString().length)
         const dataStr = chunk.toString().slice(6)
         let data
         try {
