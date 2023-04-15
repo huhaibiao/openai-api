@@ -42,12 +42,13 @@ const postOpenAi = (request, socket, messages) => {
         const regex = /data:\s*({.*?})/g; // 匹配data: 后面的[object Object] 中的内容
         let match;
         const dataArr = [];
+        try {
         while ((match = regex.exec(chunk.toString())) !== null) {
+          console.log(11111, JSON.stringify(match));
+          console.log(222, chunk);
           const data = JSON.parse(match[1]); // 将匹配到的字符串解析为 JSON 对象
           dataArr.push(data);
         }
-        try {
-          console.log(11111, JSON.stringify(dataArr));
           
           dataArr.forEach(item=>{
             if(item.choices.finish_reason=='stop'){
