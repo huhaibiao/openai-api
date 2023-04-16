@@ -42,13 +42,13 @@ const postOpenAi = (request, socket, messages) => {
       response.data.on('data', chunk => {
         if(socket.shouldStop) {
           instance.abort()
+          console.log('已取消此次回复',new Date().toLocaleTimeString());
         }
         const dataStr = chunk.toString()
         const dataArr = dataStr.split("\n").filter(item=> item)
           dataArr.forEach(v=>{
             try {
               const item = JSON.parse(v.slice(6))
-              console.log("🚀 ~ file: index.js:50 ~ postOpenAi ~ item:", item.choices[0].delta)
               if(item.choices.finish_reason==='stop'){
                 console.log("🚀 ~ file: index.js:48 ~ postOpenAi ~ item.choices.finish_reason:", item.choices.finish_reason)
                 const data = sendData()

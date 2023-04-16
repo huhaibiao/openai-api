@@ -6,7 +6,13 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "pmStart": "pm2 start src/index.js --name aiws",
+    "monit":"pm2 monit",
+    "stop": "pm2 stop aiws",
+    "delete": "pm2 delete aiws",
+    "restart": "pm2 restart aiws",
+    "logs": "pm2 logs aiws"
   },
   "keywords": [],
   "author": "",
