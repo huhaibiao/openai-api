@@ -56,13 +56,11 @@ const postOpenAi = (request, socket, messages) => {
                 socket.send(JSON.stringify(data))
                 messages.push({ role: 'assistant', content: rep })
               }else{
-                const content = JSON.stringify(item.choices[0].delta.content) 
-                const cont = item.choices[0].delta.content
-                console.log(typeof cont, !!cont);
-                if (!content) {
+                const content = item.choices[0].delta.content
+                if (!!!content) {
                   return
                 }
-                rep += item.choices[0].delta.content
+                rep += content
                 socket.send(content)
               }
             } catch (error) {
