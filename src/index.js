@@ -57,10 +57,12 @@ const postOpenAi = (request, socket, messages) => {
                 messages.push({ role: 'assistant', content: rep })
               }else{
                 const content = JSON.stringify(item.choices[0].delta.content) 
+                const cont = item.choices[0].delta.content
+                console.log(typeof cont, !!cont);
                 if (!content) {
                   return
                 }
-                rep += content
+                rep += item.choices[0].delta.content
                 socket.send(content)
               }
             } catch (error) {
@@ -115,6 +117,7 @@ server.on('connection', (socket, req) => {
   socket.on('close', () => {
     console.log('Client disconnected', 'time:' + new Date().toLocaleTimeString())
     socket.shouldStop = true
+    wss.delete(sessionId)
   })
 })
 
