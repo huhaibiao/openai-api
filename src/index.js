@@ -17,6 +17,7 @@ const postOpenAi = (request, socket, messages) => {
   if (l >= 7) {
     messages.splice(1, l - 4)
   }
+  const instance = new AbortController();
   axios
     .post(
       'https://api.openai.com/v1/chat/completions',
@@ -33,13 +34,15 @@ const postOpenAi = (request, socket, messages) => {
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
         },
-        responseType: 'stream'
+        responseType: 'stream',
+        signal: instance.signal
       }
     )
     .then(response => {
+      console.log("🚀 ~ file: index.js:41 ~ postOpenAi ~ socket.shouldStop:", socket.shouldStop)
       if(socket.shouldStop) {
         socket = null;
-        response.destroy()
+        instance.abort()
       }
       response.data.on('data', chunk => {
         const dataStr = chunk.toString()
