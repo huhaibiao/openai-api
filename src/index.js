@@ -39,12 +39,11 @@ const postOpenAi = (request, socket, messages) => {
       }
     )
     .then(response => {
-      console.log("🚀 ~ file: index.js:41 ~ postOpenAi ~ socket.shouldStop:", socket.shouldStop)
-      if(socket.shouldStop) {
-        socket = null;
-        instance.abort()
-      }
       response.data.on('data', chunk => {
+        if(socket.shouldStop) {
+          socket = null;
+          instance.abort()
+        }
         const dataStr = chunk.toString()
         const dataArr = dataStr.split("\n").filter(item=> item)
           dataArr.forEach(v=>{
