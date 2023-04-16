@@ -41,7 +41,6 @@ const postOpenAi = (request, socket, messages) => {
     .then(response => {
       response.data.on('data', chunk => {
         if(socket.shouldStop) {
-          socket = null;
           instance.abort()
         }
         const dataStr = chunk.toString()
