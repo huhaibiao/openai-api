@@ -1,18 +1,11 @@
 import dotenv from 'dotenv'
 dotenv.config()
 const wss = new Map()
-// let messages = [{ "role": "system", "content": "You are a professional front end assistant." }]
 import axios from 'axios'
 
-const postOpenAi = (request, socket, messages) => {
+const postOpenAi = (request, socket, messages, id) => {
   let rep = ''
   messages.push({ role: 'user', content: request })
-  console.log(
-    '🚀 ~ file: index.js:26 ~ postOpenAi ~ request:',
-    request,
-    'time:' + new Date().toLocaleTimeString(),
-    JSON.stringify(messages)
-  )
   const l = messages.length
   if (l >= 7) {
     messages.splice(1, l - 4)
@@ -52,7 +45,8 @@ const postOpenAi = (request, socket, messages) => {
               if(item.choices.finish_reason==='stop'){
                 console.log("🚀 ~ file: index.js:48 ~ postOpenAi ~ item.choices.finish_reason:", item.choices.finish_reason)
                 const data = sendData()
-                data.msg = 'DONE'
+              data.id = id
+              data.msg = 'DONE'
                 socket.send(JSON.stringify(data))
                 messages.push({ role: 'assistant', content: rep })
               }else{
@@ -61,13 +55,14 @@ const postOpenAi = (request, socket, messages) => {
                   return
                 }
                 rep += content
-                socket.send(content)
+                socket.send(JSON.stringify({content, id}))
               }
             } catch (error) {
               console.log("🚀 ~ file: index.js:43 ~ postOpenAi ~ dataArr:",JSON.stringify(dataArr))
               console.log('错误数据：', v)
               const data = sendData()
               data.msg = 'DONE'
+              data.id = id
               socket.send(JSON.stringify(data))
               messages.push({ role: 'assistant', content: rep })
             }
@@ -76,9 +71,7 @@ const postOpenAi = (request, socket, messages) => {
       })
     })
     .catch(er => {
-      console.log('🚀 ~ file: index.js:75 ~ postOpenAi ~ er:', er)
-      console.log('🚀 ~ file: index.js:75 ~ postOpenAi ~ er:', er.response.data)
-      console.log('post api请求出错')
+      console.log(er.response.data)
     })
 }
 
@@ -88,6 +81,7 @@ const server = new WebSocketServer({ port: 8088 })
 const sendData = (msg = '连接成功') => {
   return {
     code: 0,
+    id: 0,
     msg,
     time: new Date().getTime() / 1000
   }
@@ -109,7 +103,8 @@ server.on('connection', (socket, req) => {
     if (reserver === 'ping') {
       // console.log(`Received message: ${reserver}`);
     } else {
-      postOpenAi(reserver, socket, messages)
+      const resData = JSON.parse(reserver)
+      postOpenAi(resData.req, socket, messages, resData.index)
     }
   })
   socket.on('close', () => {
