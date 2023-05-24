@@ -36,8 +36,9 @@ export const postOpenApi = (request, socket, messages, id) => {
         }
       )
       .then((response) => {
+        let maxToken = 3000
         response.data.on('data', (chunk) => {
-          if (socket.shouldStop) {
+          if (socket.shouldStop || maxToken <= 0) {
             const data = sendData()
             data.id = id
             data.msg = 'DONE'
@@ -51,6 +52,7 @@ export const postOpenApi = (request, socket, messages, id) => {
           const dataStr = chunk.toString()
           const dataArr = dataStr.split('\n').filter((item) => item)
           dataArr.forEach((v) => {
+            maxToken--
             try {
               const item = JSON.parse(v.slice(6))
               if (item.choices.finish_reason === 'stop') {
@@ -88,6 +90,11 @@ export const postOpenApi = (request, socket, messages, id) => {
       .catch((er) => {
         console.log(er.response.data)
         resolve('回复失败')
+        socket.send(JSON.stringify({ content: '回复失败,请重试', id }))
+        const data = sendData()
+        data.id = id
+        data.msg = 'DONE'
+        socket.send(JSON.stringify(data))
       })
   })
 }
