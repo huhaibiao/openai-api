@@ -11,9 +11,8 @@ console.log(process.env.NODE_ENV)
 
 export function useProcessRequests(quest, postOpenApi = () => {}, callback, requests, num = 3) {
   requestQueue.push(quest)
-
+  if (processing) return
   const fn = async (requests) => {
-    if (processing) return
     if (requestQueue.length > 0) {
       processing = true
       requests = requests ? requests : requestQueue.splice(0, num) // 最多同时处理3个请求
@@ -34,7 +33,9 @@ export function useProcessRequests(quest, postOpenApi = () => {}, callback, requ
           }
         })
         .finally(() => {
-          processing = false
+          if (requestQueue.length === 0) {
+            processing = false
+          }
         })
     } else {
       processing = false

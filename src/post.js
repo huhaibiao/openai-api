@@ -42,6 +42,7 @@ export const postOpenApi = (request, socket, messages, id) => {
             data.id = id
             data.msg = 'DONE'
             socket.send(JSON.stringify(data))
+            messages.push({ role: 'assistant', content: rep })
             resolve(rep)
             instance.abort()
             console.log('已取消此次回复', new Date().toLocaleTimeString())
