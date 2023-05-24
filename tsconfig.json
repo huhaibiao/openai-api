@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist", 
+    "rootDir": "./src", 
+    "moduleResolution": "node",
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  }
+}

@@ -1,13 +1,15 @@
 {
   "name": "openaiapi",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js",
-    "pmStart": "pm2 start src/index.js --name aiws",
+    "start": "ts-node-dev src/index.js",
+    "dev": "cross-env NODE_ENV=dev node src/index.js",
+    "pmt": "tsc & pm2 start dist/index.js --name aiws  --watch",
+    "pmStart": "pm2 start src/index.js --name aiws  --watch",
     "monit":"pm2 monit",
     "stop": "pm2 stop aiws",
     "delete": "pm2 delete aiws",
