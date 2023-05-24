@@ -42,8 +42,10 @@ export const postOpenApi = (request, socket, messages, id) => {
             data.id = id
             data.msg = 'DONE'
             socket.send(JSON.stringify(data))
+            resolve(rep)
             instance.abort()
             console.log('已取消此次回复', new Date().toLocaleTimeString())
+            return
           }
           const dataStr = chunk.toString()
           const dataArr = dataStr.split('\n').filter((item) => item)
