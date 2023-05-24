@@ -17,7 +17,7 @@ export function useProcessRequests(quest, postOpenApi = () => {}, callback, requ
     if (requestQueue.length > 0) {
       processing = true
       requests = requests ? requests : requestQueue.splice(0, num) // 最多同时处理3个请求
-      if (process.env.NODE_ENV === 'dev') postOpenApi = () => Promise.resolve(1)
+      // if (process.env.NODE_ENV === 'dev') postOpenApi = () => Promise.resolve(1)
       return Promise.all(requests.map((item) => postOpenApi(...item)))
         .then((reqs) => {
           tryNums = 6
