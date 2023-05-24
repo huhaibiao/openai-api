@@ -39,6 +39,10 @@ export const postOpenApi = (request, socket, messages, id) => {
         response.data.on('data', (chunk) => {
           if (socket.shouldStop) {
             instance.abort()
+            const data = sendData()
+            data.id = id
+            data.msg = 'DONE'
+            socket.send(JSON.stringify(data))
             console.log('已取消此次回复', new Date().toLocaleTimeString())
           }
           const dataStr = chunk.toString()
