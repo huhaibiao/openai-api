@@ -40,7 +40,7 @@ export const userWs = (requestUrl, socket) => {
     if (minNums[sessionId] === undefined) {
       minNums[sessionId] = 50
     }
-    if (reserver.length > 100 || --minNums[sessionId] <= 0) {
+    if (reserver.length > 1000 || --minNums[sessionId] <= 0) {
       socket.send(
         JSON.stringify({ content: '目前不允许输入超1000字或超过50次聊天了,注每4小时最多50次', id: resData.index })
       )
