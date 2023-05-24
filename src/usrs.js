@@ -37,6 +37,7 @@ export const userWs = (requestUrl, socket) => {
     }
     const reserver = message.toString()
     const resData = JSON.parse(reserver)
+    socket.shouldStop = false
     if (resData.stop) {
       return (socket.shouldStop = true)
     }
