@@ -37,6 +37,9 @@ export const userWs = (requestUrl, socket) => {
     }
     const reserver = message.toString()
     const resData = JSON.parse(reserver)
+    if (resData.stop) {
+      return (socket.shouldStop = true)
+    }
     if (minNums[sessionId] === undefined) {
       minNums[sessionId] = 50
     }
