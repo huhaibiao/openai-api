@@ -9,10 +9,14 @@ import { sendData } from './utils.js'
 
 /**用户相关，保存所有用户链接 */
 const wss = new Map()
+let minNums = {}
+let time = new Date().getTime()
+
 let questionsNum = 0
 export const userWs = (requestUrl, socket) => {
   const sessionId = requestUrl.split('=')[2]
   console.log('链接成功', new Date().toLocaleString())
+
   let messages = [{ role: 'system', content: 'You are a professional front end assistant.' }]
   if (wss.has(sessionId)) {
     let userWss = wss.get(sessionId)
@@ -27,10 +31,23 @@ export const userWs = (requestUrl, socket) => {
   }
 
   socket.on('message', (message) => {
+    const diffTime = new Date().getDate() - time
+    if (diffTime / (1000 * 60 * 60) > 4) {
+      minNums[sessionId] = 50
+    }
     const reserver = message.toString()
     const resData = JSON.parse(reserver)
-    if (reserver.length > 1000) {
-      socket.send(JSON.stringify({ content: '目前不允许输入超1000字', id: resData.index }))
+    if (minNums[sessionId] === undefined) {
+      minNums[sessionId] = 50
+    }
+    if (reserver.length > 100 || --minNums[sessionId] <= 0) {
+      socket.send(
+        JSON.stringify({ content: '目前不允许输入超1000字或超过50次聊天了,注每4小时最多50次', id: resData.index })
+      )
+      const data = sendData()
+      data.msg = 'DONE'
+      data.id = resData.index
+      socket.send(JSON.stringify(data))
       return
     }
     if (reserver === 'ping') {
