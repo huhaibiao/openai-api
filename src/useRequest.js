@@ -11,7 +11,9 @@ console.log(process.env.NODE_ENV)
 
 export function useProcessRequests(quest, postOpenApi = () => {}, callback, requests, num = 3) {
   requestQueue.push(quest)
-  if (processing) return
+  if (requestQueue.length > 3) {
+    if (processing) return
+  }
   const fn = async (requests) => {
     if (requestQueue.length > 0) {
       processing = true
